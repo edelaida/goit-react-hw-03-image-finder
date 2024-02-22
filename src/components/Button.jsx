@@ -1,12 +1,10 @@
 import React from 'react';
 import s from './Searchbar.module.css';
 
-export const Button = () => {
+export const Button = ({ onClick }) => {
   return (
-    <div>
-      <button className={s.buttonLoad} type="submit">
-        Load more
-      </button>
-    </div>
+    <button onClick={onClick} className={s.buttonLoad} type="submit">
+      Load more
+    </button>
   );
 };

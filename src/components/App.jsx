@@ -29,6 +29,18 @@ export class App extends React.Component {
     }
   }
 
+  async componentDidUpdate(prevProps, prevState) {
+    if (prevState.per_page !== this.state.per_page) {
+      console.log('Skip hello');
+      try {
+        const { hits, totalHits } = await fetchGallery({
+          per_page: this.state.per_page,
+        });
+        this.setState(prev => ({ items: [...prev.items, ...hits] }));
+      } catch (error) {}
+    }
+  }
+
   handleLoadMore = () => {
     this.setState(prev => ({ per_page: prev.per_page + 12 }));
   };
