@@ -1,29 +1,48 @@
-import Button from './Button/Button';
-import ImageGallery from './ImageGallery/ImageGallery';
-import ImageGalleryItem from './ImageGalleryItem/ImageGalleryItem';
-import Loader from './Loader/Loader';
-import Modal from './Modal/Modal';
-import Searchbar from './Searchbar/Searchbar';
+import React from 'react';
+import { Searchbar } from './Searchbar';
+import { ImageGallery } from './ImageGallery';
+import { Button } from './Button';
+import { Modal } from './Modal';
+import { Loader } from './Loader';
+import { fetchGallery } from './api';
+import s from './Searchbar.module.css';
 
-export const App = () => {
-  return (
-    <div
-      style={{
-        height: '100vh',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        fontSize: 40,
-        color: '#010101',
-      }}
-    >
-      React homework template
-      <Searchbar />
-      <ImageGallery />
-      <ImageGalleryItem />
-      <Button />
-      <Modal />
-      <Loader />
-    </div>
-  );
-};
+export class App extends React.Component {
+  state = {
+    items: [],
+    total: 0,
+    page: 1,
+    per_page: 0,
+    loading: false,
+    error: null,
+    query: '',
+    isOpen: false,
+    content: null,
+  };
+
+  async componentDidMount() {
+    try {
+      const { hits, totalHits } = await fetchGallery();
+      this.setState({ items: hits, total: totalHits });
+    } catch (error) {
+      this.setState({ error });
+    }
+  }
+
+  handleLoadMore = () => {
+    this.setState(prev => ({ per_page: prev.per_page + 12 }));
+  };
+
+  render() {
+    const { items } = this.state;
+    return (
+      <div className={s.app}>
+        <Searchbar />
+        <ImageGallery posts={items} />
+        <Button onClick={this.handleLoadMore} />
+        <Modal />
+        <Loader />
+      </div>
+    );
+  }
+}
