@@ -32,10 +32,14 @@ export class App extends React.Component {
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (prevState.page !== this.state.page) {
+    if (
+      prevState.page !== this.state.page ||
+      prevState.query !== this.state.query
+    ) {
       try {
         const { hits, totalHits } = await fetchGallery({
           page: this.state.page,
+          q: this.state.query,
         });
         this.setState(prev => ({
           items: [...prev.items, ...hits],
@@ -53,11 +57,11 @@ export class App extends React.Component {
     this.setState({ isOpen: true, content });
   };
   handleSetQuery = query => {
-    this.setState({ query });
+    this.setState({ query, items: [], page: 1 });
   };
 
   handleLoadMore = () => {
-    this.setState(prev => ({ page: prev.page + 12 }));
+    this.setState(prev => ({ page: prev.page + 1 }));
   };
 
   render() {
