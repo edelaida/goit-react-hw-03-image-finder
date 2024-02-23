@@ -12,7 +12,6 @@ export class App extends React.Component {
     items: [],
     total: 0,
     page: 1,
-    per_page: 0,
     loading: false,
     error: null,
     query: '',
@@ -22,38 +21,58 @@ export class App extends React.Component {
 
   async componentDidMount() {
     try {
+      this.setState({ loading: true });
       const { hits, totalHits } = await fetchGallery();
       this.setState({ items: hits, total: totalHits });
     } catch (error) {
       this.setState({ error });
+    } finally {
+      this.setState({ loading: false });
     }
   }
 
   async componentDidUpdate(prevProps, prevState) {
-    if (prevState.per_page !== this.state.per_page) {
-      console.log('Skip hello');
+    if (prevState.page !== this.state.page) {
       try {
         const { hits, totalHits } = await fetchGallery({
-          per_page: this.state.per_page,
+          page: this.state.page,
         });
-        this.setState(prev => ({ items: [...prev.items, ...hits] }));
+        this.setState(prev => ({
+          items: [...prev.items, ...hits],
+          total: totalHits,
+        }));
       } catch (error) {}
     }
   }
 
+  handleToggleModal = () => {
+    this.setState(prev => ({ isOpen: !prev.isOpen }));
+  };
+
+  handleSeeInfo = content => {
+    this.setState({ isOpen: true, content });
+  };
+  handleSetQuery = query => {
+    this.setState({ query });
+  };
+
   handleLoadMore = () => {
-    this.setState(prev => ({ per_page: prev.per_page + 12 }));
+    this.setState(prev => ({ page: prev.page + 12 }));
   };
 
   render() {
-    const { items } = this.state;
+    const { items, loading, total, isOpen, content } = this.state;
     return (
       <div className={s.app}>
-        <Searchbar />
-        <ImageGallery posts={items} />
-        <Button onClick={this.handleLoadMore} />
-        <Modal />
-        <Loader />
+        <Searchbar handleSetQuery={this.handleSetQuery} />
+        <ImageGallery openModal={this.handleSeeInfo} posts={items} />
+        {loading && !items.length && <Loader />}
+        {items.length && items.length < total ? (
+          <Button onClick={this.handleLoadMore} />
+        ) : null}
+        {isOpen && (
+          <Modal content={content} closeModal={this.handleToggleModal} />
+        )}
       </div>
     );
   }

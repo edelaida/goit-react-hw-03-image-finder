@@ -6,16 +6,28 @@ export class Searchbar extends React.Component {
     searchValue: '',
   };
 
+  handleChangeValue = e => {
+    this.setState({ searchValue: e.target.value });
+  };
+
+  handleSubmit = e => {
+    e.preventDefault();
+    this.props.handleSetQuery(this.state.searchValue);
+    this.setState({ searchValue: '' });
+  };
+
   render() {
     return (
       <header className={s.searchbar}>
-        <form className={s.searchForm}>
+        <form onSubmit={this.handleSubmit} className={s.searchForm}>
           <button type="submit" className={s.searchFormButton}>
-            <span className={s.searchFormLabel}>Search</span>
+            Search
           </button>
 
           <input
             className={s.searchFormInput}
+            value={this.state.searchValue}
+            onChange={this.handleChangeValue}
             type="text"
             autocomplete="off"
             autofocus

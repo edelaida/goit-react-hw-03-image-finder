@@ -1,11 +1,11 @@
 import React from 'react';
 import s from './Searchbar.module.css';
 
-export const Modal = ({ largeImageURL }) => {
+export const Modal = ({ content, closeModal }) => {
   return (
-    <div className="{s.overlay}">
+    <div onClick={closeModal} className={s.overlay}>
       <div className={s.modal}>
-        <img src={largeImageURL} alt="" />
+        <img src={content.largeImageURL} alt="" />
       </div>
     </div>
   );

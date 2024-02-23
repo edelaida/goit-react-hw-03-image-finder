@@ -8,13 +8,11 @@ export const fetchGallery = async configParams => {
       key: '42086416-f15f3f0137ece30b1354f2d54',
       image_type: 'photo',
       orientation: 'horizontal',
-      safesearch: true,
       per_page: 12,
       page: 1,
       ...configParams,
     },
   });
-  console.log(data);
   return data;
 };
 
