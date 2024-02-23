@@ -2,9 +2,25 @@ import React from 'react';
 import s from './Searchbar.module.css';
 
 export class Modal extends React.Component {
+  intervalId = null;
+  timeoutId = null;
+
   componentDidMount() {
     document.body.style.overflowY = 'hidden';
     document.addEventListener('keydown', this.handleKeyDown);
+    this.timeoutId = setTimeout(() => {}, 3000);
+
+    this.intervalId = setInterval(() => {
+      // console.log(new Date().toLocaleTimeString())
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    document.body.style.overflowY = 'auto';
+
+    document.removeEventListener('keydown', this.handleKeyDown);
+    clearInterval(this.intervalId);
+    clearTimeout(this.timeoutId);
   }
 
   handleKeyDown = e => {
@@ -30,5 +46,3 @@ export class Modal extends React.Component {
     );
   }
 }
-
-//this.props.closeModal
